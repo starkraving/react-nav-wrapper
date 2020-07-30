@@ -5,7 +5,9 @@ function NavWrapper({ innerContent }) {
     const { setHistory } = useContext(HistoryContext);
   function handleClick(evt) {
     if ( evt.target.href ) {
-        setHistory(evt.target.getAttribute('href'));
+        const targetHref = evt.target.getAttribute('href');
+        if ( targetHref.match(/^(http|https):\/\//) ) return;
+        setHistory(targetHref);
     }
     evt.preventDefault();
   }

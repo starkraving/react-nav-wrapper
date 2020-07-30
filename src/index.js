@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import {BrowserRouter} from "react-router-dom";
 import NavWrapper from "./components/nav-wrapper/nav-wrapper.component";
 import HistoryProvider from "./providers/history-context.provider";
 
@@ -17,15 +16,7 @@ ReactDOM.render(
 );
 
 ReactDOM.render(
-    <React.StrictMode>
-            <HistoryProvider>
-                <BrowserRouter>
-                    <hr />
-                    <p>I am a completely separate React app loaded on the same page</p>
-                    <App />
-                </BrowserRouter>
-            </HistoryProvider>
-    </React.StrictMode>,
+    <App/>,
     document.getElementById('root')
 );
 

@@ -1,30 +1,37 @@
-import React, {useContext, useEffect} from 'react';
+import React from 'react';
 import './App.css';
-import {Route, Switch} from "react-router-dom";
+import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
 import FooBar from "./components/foo-bar/foo-bar.component";
 import BazBong from "./components/baz-bong/baz-bong.component";
-import {HistoryContext} from "./providers/history-context.provider";
-import {useHistory} from "react-router";
 
-const App = () => {
-    const { history, historyChanged, setHistoryChanged } = useContext(HistoryContext);
-    const browserHistory = useHistory();
-    useEffect(() => {
-        if ( historyChanged ) {
-            console.log('route change!');
-            browserHistory.push(history);
-            setHistoryChanged(false);
-        }
-    }, [history, historyChanged, setHistoryChanged, browserHistory]);
+const App = ({history = null}) => {
     return (
-        <Switch>
-            <Route path='/foo/bar' exact component={FooBar}/>
-            <Route path='/baz/bong' exact component={BazBong}/>
-            <Route path='*'
-                   render={({location}) => { return (
-                       <div className='catch_all'><h2>No Match</h2><p>I caught the {location.pathname} route</p></div>
-                   ); }}/>
-        </Switch>
+        <React.StrictMode>
+                <BrowserRouter>
+                    {
+                        ( history )
+                            ? <Redirect to={history}/>
+                            : ''
+                    }
+                    <hr />
+                    <p>I am a completely separate React app loaded on the same page</p>
+                    <Switch>
+                        <Route path='/foo/bar' exact component={FooBar}/>
+                        <Route path='/baz/bong' exact component={BazBong}/>
+                        <Route path='*'
+                               render={({location}) => {
+                                   if ( history ) {
+                                       // this is not a React route
+                                       window.location.href = history;
+                                       return null;
+                                   }
+                                   return (
+                                   <div className='catch_all'><h2>No Match</h2><p>I caught the {location.pathname} route</p></div>
+                               );
+                               }}/>
+                    </Switch>
+                </BrowserRouter>
+        </React.StrictMode>
     );
 };
 

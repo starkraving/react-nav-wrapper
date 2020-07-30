@@ -1,37 +1,30 @@
 import React, {createContext, useEffect, useState} from 'react';
+import ReactDOM from "react-dom";
+import App from "../App";
 
 const defaults = {
-    history: '',
-    historyChanged: false
+    history: null,
 };
 
 export const HistoryContext = createContext({
     history: defaults.history,
-    historyChanged: defaults.historyChanged,
     setHistory: () => {},
-    setHistoryChanged: () => {}
 });
 
 const HistoryProvider = ({ children }) => {
     const [history, setHistory] = useState(defaults.history);
-    const [historyChanged, setHistoryChanged] = useState(defaults.historyChanged);
+
     useEffect(() => {
-        localStorage.setItem('history', history);
+        if (!history) return;
+        console.log('history changed, passed in to App');
+        ReactDOM.render(
+            <App history={history}/>,
+            document.getElementById('root')
+        );
     }, [history]);
 
-    useEffect(() => {
-        const listener = setInterval(() => {
-            const storedHistory = localStorage.getItem('history');
-            if ( storedHistory && storedHistory !== history ) {
-                setHistory(storedHistory);
-                setHistoryChanged(true);
-            }
-        }, 100);
-        return () => clearInterval(listener);
-    });
-
     return (
-        <HistoryContext.Provider value={{history, setHistory, historyChanged, setHistoryChanged}}>
+        <HistoryContext.Provider value={{history, setHistory}}>
             {children}
         </HistoryContext.Provider>
     );
